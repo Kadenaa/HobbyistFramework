@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Xml.Serialization;
 using UnityEditor;
 
-public class SkipReactiveSpeechNode : DialogueNode {
+public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 	public string speakerText;
 	public string dialogueText;
 	public int uninterruptedNode;
@@ -21,7 +21,7 @@ public class SkipReactiveSpeechNode : DialogueNode {
 		delayPerCharacter = 0.1f;
 	}
 
-	public override void Execute(DialogueManager manager) {
+	public void Execute(DialogueManager manager) {
 		if (!manager.dialoguePanel.activeSelf) {
 			manager.dialoguePanel.SetActive(true);
 		}

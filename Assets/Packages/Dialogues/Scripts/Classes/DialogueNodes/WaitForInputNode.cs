@@ -5,10 +5,10 @@ using UnityEditor;
 using System.Xml.Serialization;
 
 
-public class WaitForInputNode : DialogueNode {
+public class WaitForInputNode : DialogueNode, IExecutableNode {
 	public int targetNode;
 
-	public override void Execute(DialogueManager manager) {
+	public void Execute(DialogueManager manager) {
 		manager.isWaiting = true;
 		manager.StartCoroutine(WaitCoroutine(manager));
 	}

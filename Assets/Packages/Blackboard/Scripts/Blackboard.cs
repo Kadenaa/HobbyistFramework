@@ -39,7 +39,11 @@ public class Blackboard {
 	/// Initializes the Blackboard Instance.
 	/// </summary>
 	public static void Initialize() {
-		Debug.Log(Instance == null ? "[Blackboard] - Failed to Initialize" : "[Blackboard] - Initialized");
+		if (_instance == null) {
+			_instance = new Blackboard();
+			Load();
+			Debug.Log("[Blackboard] = Initialized");
+		}
 	}
 
 	/// <summary>

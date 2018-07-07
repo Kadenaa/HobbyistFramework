@@ -102,10 +102,11 @@ public class DialogueManager : MonoBehaviour {
 			enabled = false;
 			return;
 		}
+
+		Blackboard.Initialize();
 	}
 
 	private void Start() {
-		Blackboard.Initialize();
 		StartDialogue(DialogueDatabase.Instance.GetItem("test"));
 	}
 	private void Update() {
@@ -132,7 +133,10 @@ public class DialogueManager : MonoBehaviour {
 
 	public void Play() {
 		if (currentNode != null && currentDialogue != null) {
-			currentNode.Execute(this);
+			IExecutableNode node = currentNode as IExecutableNode;
+			if (node != null) {
+				node.Execute(this);
+			}
 		}
 	}
 }

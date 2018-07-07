@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Xml.Serialization;
 using UnityEditor;
 
-public class ChoiceNode : DialogueNode {
+public class ChoiceNode : DialogueNode, IExecutableNode {
 	public List<DialogueChoice> choices;
 
 	public ChoiceNode() {
@@ -20,7 +20,7 @@ public class ChoiceNode : DialogueNode {
 		choices.Remove(choice);
 	}
 
-	public override void Execute(DialogueManager manager) {
+	public void Execute(DialogueManager manager) {
 		manager.choicePanel.SetActive(true);
 
 		foreach (DialogueChoice choice in choices) {

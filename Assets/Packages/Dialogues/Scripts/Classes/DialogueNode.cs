@@ -7,13 +7,15 @@ public abstract class DialogueNode {
 
 	public DialogueNode() { }
 
-	public abstract void Execute(DialogueManager manager);
 	public abstract void DetailEditorGUI();
 
 	protected void JumpToNode(DialogueManager manager, int targetNode) {
 		manager.currentNode = manager.currentDialogue.GetNode(targetNode);
 		if (manager.currentNode != null) {
-			manager.currentNode.Execute(manager);
+			IExecutableNode node = manager.currentNode as IExecutableNode;
+			if (node != null) {
+				node.Execute(manager);
+			}
 		} else {
 			manager.StopDialogue();
 		}

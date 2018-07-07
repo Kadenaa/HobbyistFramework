@@ -4,13 +4,13 @@ using UnityEngine;
 using System.Xml.Serialization;
 using UnityEditor;
 
-public class SetStringVariableNode : DialogueNode {
+public class SetStringVariableNode : DialogueNode, IExecutableNode {
 	public string targetSource;
 	public string targetName;
 	public string value;
 	public int targetNode;
 
-	public override void Execute(DialogueManager manager) {
+	public void Execute(DialogueManager manager) {
 		string actualValue = value;
 
 		if (value[0] == '@') {

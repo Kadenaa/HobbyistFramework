@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-public class SpeechNode : DialogueNode {
+public class SpeechNode : DialogueNode, IExecutableNode {
 	public string speakerText;
 	public string dialogueText;
 	public int targetNode;
@@ -21,7 +21,7 @@ public class SpeechNode : DialogueNode {
 		delayPerCharacter = 0.1f;
 	}
 
-	public override void Execute(DialogueManager manager) {
+	public void Execute(DialogueManager manager) {
 		if (!manager.dialoguePanel.activeSelf) {
 			manager.dialoguePanel.SetActive(true);
 		}
@@ -59,12 +59,22 @@ public class SpeechNode : DialogueNode {
 			}
 		}
 
-		manager.dialogueText.text = replacedText;
+		string cleanText = RemoveCommands(replacedText);
+		manager.dialogueText.text = cleanText;
 		manager.isWaiting = false;
 
 		JumpToNode(manager, targetNode);
 
 		yield return null;
+	}
+
+	protected string RemoveCommands(string value) {
+		string result = "";
+		string[] split = value.Split(new char[] { '\\', ')' });
+		for (int i = 0; i < split.Length; i += 2) {
+			result += split[i];
+		}
+		return result;
 	}
 
 	protected string ParseCommand(string value) {
