@@ -4,54 +4,24 @@ using UnityEngine;
 using System.Xml.Serialization;
 using UnityEditor;
 
-public class SetStringVariableNode : DialogueNode, IExecutableNode {
-	public string targetSource;
-	public string targetName;
-	public string value;
+public class SetBlackboardStringNode : DialogueNode, IExecutableNode {
+	public string variableName;
+	public string defaultValue;
+	public int inputNode;
 	public int targetNode;
 
 	public void Execute(DialogueManager manager) {
-		string actualValue = value;
-
-		if (value[0] == '@') {
-			int i = 1;
-			string variableSource = "";
-			for (int j = i; j < value.Length; ++j) {
-				++i;
-				if (value[j] == '[') {
-					break;
-				}
-				variableSource += value[j];
-			}
-
-			string variableName = "";
-			for (int j = i; j < value.Length; ++j) {
-				if (value[j] == ']') {
-					break;
-				}
-				++i;
-				variableName += value[j];
-			}
-
-			actualValue = GetVariableString(variableSource, variableName);
-		}
-
-		switch (targetSource.ToLower()) {
-			default:
-				Debug.LogError("[SetVariable Node] - Unknown Variable Source");
-				break;
-			case "blackboard":
-				Blackboard.Instance[targetName] = actualValue;
-				break;
-		}
+		IValueNode<string> valueNode = manager.currentDialogue.GetNode(inputNode) as IValueNode<string>;
+		string actualValue = (valueNode == null ? defaultValue : valueNode.GetValue());
+		Blackboard.Instance[variableName] = actualValue;
 
 		JumpToNode(manager, targetNode);
 	}
 
 	public override void DetailEditorGUI() {
-		targetSource = EditorGUILayout.TextField("Variable Source", targetSource);
-		targetName = EditorGUILayout.TextField("Variable Name", targetName);
-		value = EditorGUILayout.TextField("Variable Value", value);
+		variableName = EditorGUILayout.TextField("Variable Name", variableName);
+		defaultValue = EditorGUILayout.TextField("Default Value", defaultValue);
+		inputNode = EditorGUILayout.IntField("Input Node", targetNode);
 		targetNode = EditorGUILayout.IntField("Target Node", targetNode);
 	}
 }
