@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class GetBlackboardString : DialogueNode, IValueNode<string> {
+public class GetBlackboardStringNode : DialogueNode, IValueNode<string> {
 	public string variableName;
 
 	public override void DetailEditorGUI() {
