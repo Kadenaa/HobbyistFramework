@@ -4,5 +4,5 @@ using System.Linq;
 using System.Text;
 
 public interface IValueNode<T> {
-	T GetValue();
+	T GetValue(DialogueManager manager);
 }

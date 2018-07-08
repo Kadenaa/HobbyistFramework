@@ -12,7 +12,7 @@ public class SetBlackboardStringNode : DialogueNode, IExecutableNode {
 
 	public void Execute(DialogueManager manager) {
 		IValueNode<string> valueNode = manager.currentDialogue.GetNode(inputNode) as IValueNode<string>;
-		string actualValue = (valueNode == null ? defaultValue : valueNode.GetValue());
+		string actualValue = (valueNode == null ? defaultValue : valueNode.GetValue(manager));
 		Blackboard.Instance[variableName] = actualValue;
 
 		JumpToNode(manager, targetNode);
@@ -21,7 +21,7 @@ public class SetBlackboardStringNode : DialogueNode, IExecutableNode {
 	public override void DetailEditorGUI() {
 		variableName = EditorGUILayout.TextField("Variable Name", variableName);
 		defaultValue = EditorGUILayout.TextField("Default Value", defaultValue);
-		inputNode = EditorGUILayout.IntField("Input Node", targetNode);
+		inputNode = EditorGUILayout.IntField("Input Node", inputNode);
 		targetNode = EditorGUILayout.IntField("Target Node", targetNode);
 	}
 }

@@ -10,7 +10,7 @@ public class GetBlackboardStringNode : DialogueNode, IValueNode<string> {
 		variableName = EditorGUILayout.TextField("Variable Name", variableName);
 	}
 
-	public string GetValue() {
+	public string GetValue(DialogueManager manager) {
 		object varaible = Blackboard.Instance[variableName];
 		if (varaible != null) {
 			return varaible.ToString();
