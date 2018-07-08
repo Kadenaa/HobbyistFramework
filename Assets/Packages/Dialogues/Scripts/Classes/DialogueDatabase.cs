@@ -56,6 +56,7 @@ public class DialogueDatabase : Database<Dialogue> {
 						serializer.Serialize(writer, dialogue);
 					} catch (System.Exception e) {
 						Debug.LogError(string.Format("[Dialogue Database] - {0}", e.ToString()));
+						Debug.LogError("[Dialogue Database] - Make sure that all objects composing Implemented nodes have a paramaterless constructor.");
 					}
 				}
 			}

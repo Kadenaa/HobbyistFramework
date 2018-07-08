@@ -6,22 +6,33 @@ using UnityEditor;
 
 public class SetBlackboardStringNode : DialogueNode, IExecutableNode {
 	public string variableName;
-	public string defaultValue;
-	public int inputNode;
+	public DynamicInput<string> input;
 	public int targetNode;
 
+	public SetBlackboardStringNode() {
+		variableName = "variable_name";
+		input = new DynamicInput<string>("Value");
+		targetNode = -1;
+	}
+
 	public void Execute(DialogueManager manager) {
-		IValueNode<string> valueNode = manager.currentDialogue.GetNode(inputNode) as IValueNode<string>;
-		string actualValue = (valueNode == null ? defaultValue : valueNode.GetValue(manager));
-		Blackboard.Instance[variableName] = actualValue;
+		Blackboard.Instance[variableName] = input.GetValue(manager);
 
 		JumpToNode(manager, targetNode);
 	}
 
 	public override void DetailEditorGUI() {
 		variableName = EditorGUILayout.TextField("Variable Name", variableName);
-		defaultValue = EditorGUILayout.TextField("Default Value", defaultValue);
-		inputNode = EditorGUILayout.IntField("Input Node", inputNode);
+
+		EditorGUILayout.BeginHorizontal();
+		input.dynamic = EditorGUILayout.Toggle("Dynamic", input.dynamic);
+		if (input.dynamic) {
+			input.inputNode = EditorGUILayout.IntField("Input Node", input.inputNode);
+		} else {
+			input.defaultData = EditorGUILayout.TextField("Text", input.defaultData);
+		}
+		EditorGUILayout.EndHorizontal();
+
 		targetNode = EditorGUILayout.IntField("Target Node", targetNode);
 	}
 }

@@ -100,8 +100,10 @@ public class DialogueWindow : EditorWindow {
 			for (int i = 0; i < selected.nodes.Count; ++i) {
 				EditorGUILayout.BeginVertical("box");
 				DialogueNode node = selected.nodes[i];
+				EditorGUILayout.LabelField(node.GetType().ToString(), EditorStyles.boldLabel);
 				EditorGUILayout.BeginHorizontal();
 				node.nodeID = EditorGUILayout.IntField("ID", node.nodeID);
+				GUILayout.FlexibleSpace();
 				if (GUILayout.Button("X", GUILayout.Width(20))) {
 					selected.DeleteNode(node);
 					i--;

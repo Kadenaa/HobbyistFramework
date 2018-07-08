@@ -8,15 +8,15 @@ using System;
 
 public class SpeechNode : DialogueNode, IExecutableNode {
 	public string speakerText;
-	public string dialogueText;
 	public int targetNode;
+	public DynamicInput<string> dynamicInput;
 	public float delayPerCharacter;
 
 	private float currentDelay;
 
 	public SpeechNode() {
 		speakerText = "Speaker";
-		dialogueText = "Dialogue";
+		dynamicInput = new DynamicInput<string>("Dialogue");
 		targetNode = -1;
 		delayPerCharacter = 0.1f;
 	}
@@ -34,8 +34,32 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		manager.StartCoroutine(AnimateText(manager));
 	}
 
+	public override void DetailEditorGUI() {
+		speakerText = EditorGUILayout.TextField("Speaker", speakerText);
+
+		EditorGUILayout.BeginHorizontal();
+		dynamicInput.dynamic = EditorGUILayout.Toggle("Dynamic", dynamicInput.dynamic);
+		if (dynamicInput.dynamic) {
+			dynamicInput.inputNode = EditorGUILayout.IntField("Input Node", dynamicInput.inputNode);
+		} else {
+			dynamicInput.defaultData = EditorGUILayout.TextField("Text", dynamicInput.defaultData);
+		}
+		EditorGUILayout.EndHorizontal();
+
+		targetNode = EditorGUILayout.IntField("Target", targetNode);
+		delayPerCharacter = EditorGUILayout.FloatField("Default Delay", delayPerCharacter);
+	}
+
 	private IEnumerator AnimateText(DialogueManager manager) {
-		string replacedText = ReplaceTextVariables(dialogueText);
+		IValueNode<string> node = manager.currentDialogue.GetNode(dynamicInput.inputNode) as IValueNode<string>;
+		string text = "";
+		if (dynamicInput.dynamic) {
+			text = node == null ? dynamicInput.defaultData : node.GetValue(manager);
+		} else {
+			text = dynamicInput.defaultData;
+		}
+
+		string replacedText = ReplaceTextVariables(text);
 
 		for (int i = 0; i < replacedText.Length; ++i) {
 			if (manager.isWaiting) {
@@ -151,12 +175,5 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		}
 
 		return result;
-	}
-
-	public override void DetailEditorGUI() {
-		speakerText = EditorGUILayout.TextField("Speaker", speakerText);
-		dialogueText = EditorGUILayout.TextField("Text", dialogueText);
-		targetNode = EditorGUILayout.IntField("Target", targetNode);
-		delayPerCharacter = EditorGUILayout.FloatField("Default Delay", delayPerCharacter);
 	}
 }

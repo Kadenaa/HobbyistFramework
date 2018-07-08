@@ -116,12 +116,14 @@ public class DialogueManager : MonoBehaviour {
 	}
 
 	public void StartDialogue(Dialogue dialogue) {
-		currentDialogue = dialogue;
-		currentNode = dialogue.GetNode(0);
-		if (currentNode == null) {
-			Debug.LogError("[Dialogue Manager] - Error, the Dialogue Object has no starting node.");
-		} else {
-			Play();
+		if (dialogue != null) {
+			currentDialogue = dialogue;
+			currentNode = dialogue.GetNode(0);
+			if (currentNode == null) {
+				Debug.LogError("[Dialogue Manager] - Error, the Dialogue Object has no starting node.");
+			} else {
+				Play();
+			}
 		}
 	}
 
