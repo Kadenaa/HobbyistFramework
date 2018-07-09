@@ -29,6 +29,7 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		currentDelay = delayPerCharacter;
 		manager.dialogueText.text = "";
 		manager.isWaiting = true;
+		manager.canSkip = true;
 
 		manager.speakerText.text = speakerText;
 		manager.StartCoroutine(AnimateText(manager));
@@ -51,24 +52,16 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 	}
 
 	private IEnumerator AnimateText(DialogueManager manager) {
-		IValueNode<string> node = manager.currentDialogue.GetNode(dynamicInput.inputNode) as IValueNode<string>;
-		string text = "";
-		if (dynamicInput.dynamic) {
-			text = node == null ? dynamicInput.defaultData : node.GetValue(manager);
-		} else {
-			text = dynamicInput.defaultData;
-		}
+		string text = dynamicInput.GetValue(manager);
 
-		string replacedText = ReplaceTextVariables(text);
-
-		for (int i = 0; i < replacedText.Length; ++i) {
+		for (int i = 0; i < text.Length; ++i) {
 			if (manager.isWaiting) {
-				if (replacedText[i] == '\\') {
+				if (text[i] == '\\') {
 					++i;
-					string command = ParseCommand(replacedText.Substring(i));
+					string command = ParseCommand(text.Substring(i));
 					i += command.Length + 1;
 
-					string[] parameters = ParseParameters(replacedText.Substring(i));
+					string[] parameters = ParseParameters(text.Substring(i));
 					for (int j = 0; j < parameters.Length; ++j) {
 						i += parameters[j].Length;
 					}
@@ -76,14 +69,14 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 					HandleCommand(command, parameters);
 				} else {
 					yield return new WaitForSeconds(currentDelay);
-					manager.dialogueText.text += replacedText[i];
+					manager.dialogueText.text += text[i];
 				}
 			} else {
 				break;
 			}
 		}
 
-		string cleanText = RemoveCommands(replacedText);
+		string cleanText = RemoveCommands(text);
 		manager.dialogueText.text = cleanText;
 		manager.isWaiting = false;
 
@@ -142,38 +135,5 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 				}
 				break;
 		}
-	}
-
-	protected string ReplaceTextVariables(string originalText) {
-		string result = "";
-
-		for (int i = 0; i < originalText.Length; ++i) {
-			if (originalText[i] == '@') {
-				++i;
-				string variableSource = "";
-				for (int j = i; j < originalText.Length; ++j) {
-					++i;
-					if (originalText[j] == '[') {
-						break;
-					}
-					variableSource += originalText[j];
-				}
-
-				string variableName = "";
-				for (int j = i; j < originalText.Length; ++j) {
-					if (originalText[j] == ']') {
-						break;
-					}
-					++i;
-					variableName += originalText[j];
-				}
-
-				result += GetVariableString(variableSource, variableName);
-			} else {
-				result += originalText[i];
-			}
-		}
-
-		return result;
 	}
 }

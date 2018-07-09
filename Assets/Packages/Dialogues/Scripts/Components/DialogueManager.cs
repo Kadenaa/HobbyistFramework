@@ -28,6 +28,7 @@ public class DialogueManager : MonoBehaviour {
 	public Dialogue currentDialogue;
 	public DialogueNode currentNode;
 
+	public bool canSkip;
 	public bool isWaiting;
 
 	private void Awake() {
@@ -111,7 +112,9 @@ public class DialogueManager : MonoBehaviour {
 	}
 	private void Update() {
 		if (Input.GetMouseButtonDown(0)) {
-			isWaiting = false;
+			if (canSkip) {
+				isWaiting = false;
+			}
 		}
 	}
 
@@ -140,5 +143,9 @@ public class DialogueManager : MonoBehaviour {
 				node.Execute(this);
 			}
 		}
+	}
+
+	public void StopWaiting() {
+		isWaiting = false;
 	}
 }

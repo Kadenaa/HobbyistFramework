@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 	public string speakerText;
-	public string dialogueText;
+	public DynamicInput<string> dynamicInput;
 	public int uninterruptedNode;
 	public int interruptedNode;
 	public float delayPerCharacter;
@@ -15,7 +15,7 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 
 	public SkipReactiveSpeechNode() {
 		speakerText = "Speaker";
-		dialogueText = "Dialogue";
+		dynamicInput = new DynamicInput<string>("Dialogue");
 		uninterruptedNode = -1;
 		interruptedNode = -1;
 		delayPerCharacter = 0.1f;
@@ -35,22 +35,22 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 	}
 
 	private IEnumerator AnimateText(DialogueManager manager) {
-		string replacedText = ReplaceTextVariables(dialogueText);
+		string text = dynamicInput.GetValue(manager);
 
-		for (int i = 0; i < replacedText.Length; ++i) {
+		for (int i = 0; i < text.Length; ++i) {
 			if (manager.isWaiting) {
-				if (replacedText[i] == '\\') {
+				if (text[i] == '\\') {
 					++i;
 					string command = "";
-					while (replacedText[i] != ' ') {
-						command += replacedText[i];
+					while (text[i] != ' ') {
+						command += text[i];
 						++i;
 					}
 					command = command.ToLower();
 
 					Debug.Log(command);
 				} else {
-					manager.dialogueText.text += replacedText[i];
+					manager.dialogueText.text += text[i];
 					yield return new WaitForSeconds(delayPerCharacter);
 				}
 			} else {
@@ -59,7 +59,7 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 			}
 		}
 
-		manager.dialogueText.text = replacedText;
+		manager.dialogueText.text = text;
 		manager.isWaiting = false;
 
 		if (interrupted) {
@@ -71,60 +71,18 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 		yield return null;
 	}
 
-	private string ReplaceTextVariables(string originalText) {
-		string result = "";
-
-		for (int i = 0; i < originalText.Length; ++i) {
-			if (originalText[i] == '@') {
-				++i;
-				string variableSource = "";
-				for (int j = i; j < originalText.Length; ++j) {
-					++i;
-					if (originalText[j] == '[') {
-						break;
-					}
-					variableSource += originalText[j];
-				}
-
-				string variableName = "";
-				for (int j = i; j < originalText.Length; ++j) {
-					++i;
-					if (originalText[j] == ']') {
-						break;
-					}
-					variableName += originalText[j];
-				}
-
-				result += GetVariableString(variableSource, variableName);
-			} else {
-				result += originalText[i];
-			}
-		}
-
-		return result;
-	}
-
-	private string GetVariableString(string source, string name) {
-		source = source.ToLower();
-		name = name.ToLower();
-
-		switch (source) {
-			default:
-				Debug.LogError("[Speech Node] - Unknown Variable Source");
-				return "";
-			case "blackboard":
-				object blackboardVariable = Blackboard.Instance[name];
-				if (blackboardVariable != null) {
-					return blackboardVariable.ToString();
-				} else {
-					return string.Format("@Blackboard[{0}]", name);
-				}
-		}
-	}
-
 	public override void DetailEditorGUI() {
 		speakerText = EditorGUILayout.TextField("Speaker", speakerText);
-		dialogueText = EditorGUILayout.TextField("Text", dialogueText);
+
+		EditorGUILayout.BeginHorizontal();
+		dynamicInput.dynamic = EditorGUILayout.Toggle("Dynamic", dynamicInput.dynamic);
+		if (dynamicInput.dynamic) {
+			dynamicInput.inputNode = EditorGUILayout.IntField("Input Node", dynamicInput.inputNode);
+		} else {
+			dynamicInput.defaultData = EditorGUILayout.TextField("Text", dynamicInput.defaultData);
+		}
+		EditorGUILayout.EndHorizontal();
+
 		uninterruptedNode = EditorGUILayout.IntField("Un-Interrupted Target", uninterruptedNode);
 		interruptedNode = EditorGUILayout.IntField("Interrupted Target", interruptedNode);
 		delayPerCharacter = EditorGUILayout.FloatField("Default Delay", delayPerCharacter);
