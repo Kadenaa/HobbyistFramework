@@ -15,12 +15,13 @@ public class SetBlackboardStringNode : DialogueNode, IExecutableNode {
 		targetNode = -1;
 	}
 
-	public void Execute(DialogueManager manager) {
-		Blackboard.Instance[variableName] = input.GetValue(manager);
+	public void Execute(DialogueController manager) {
+		GameManager.Instance.blackboard[variableName] = input.GetValue(manager);
 
 		JumpToNode(manager, targetNode);
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		variableName = EditorGUILayout.TextField("Variable Name", variableName);
 
@@ -35,4 +36,5 @@ public class SetBlackboardStringNode : DialogueNode, IExecutableNode {
 
 		targetNode = EditorGUILayout.IntField("Target Node", targetNode);
 	}
+#endif
 }

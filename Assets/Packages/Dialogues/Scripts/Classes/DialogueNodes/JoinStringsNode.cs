@@ -21,6 +21,7 @@ public class JoinStringsNode : DialogueNode, IValueNode<string> {
 		inputs.Remove(input);
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		for (int i = 0; i < inputs.Count; ++i) {
 			EditorGUILayout.BeginHorizontal();
@@ -41,8 +42,9 @@ public class JoinStringsNode : DialogueNode, IValueNode<string> {
 			Add();
 		}
 	}
+#endif
 
-	public string GetValue(DialogueManager manager) {
+	public string GetValue(DialogueController manager) {
 		string result = "";
 
 		for (int i = 0; i < inputs.Count; ++i) {

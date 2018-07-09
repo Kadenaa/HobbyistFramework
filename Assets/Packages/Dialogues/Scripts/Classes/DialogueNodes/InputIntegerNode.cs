@@ -8,7 +8,7 @@ public class InputIntegerNode : DialogueNode, IExecutableNode, IValueNode<int> {
 	public int targetNode;
 	private int inputData;
 
-	public void Execute(DialogueManager manager) {
+	public void Execute(DialogueController manager) {
 		manager.integerInputPanel.gameObject.SetActive(true);
 
 		manager.integerInputPanel.CurrentValue = 0;
@@ -17,16 +17,18 @@ public class InputIntegerNode : DialogueNode, IExecutableNode, IValueNode<int> {
 		manager.integerInputButton.onClick.AddListener(() => { HandleSubmitClick(manager); });
 	}
 
-	public int GetValue(DialogueManager manager) {
+	public int GetValue(DialogueController manager) {
 		return inputData;
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		maximumValue = EditorGUILayout.IntField("Maximum Value", maximumValue);
 		targetNode = EditorGUILayout.IntField("Target Node", targetNode);
 	}
+#endif
 
-	private void HandleSubmitClick(DialogueManager manager) {
+	private void HandleSubmitClick(DialogueController manager) {
 		inputData = manager.integerInputPanel.CurrentValue;
 		JumpToNode(manager, targetNode);
 

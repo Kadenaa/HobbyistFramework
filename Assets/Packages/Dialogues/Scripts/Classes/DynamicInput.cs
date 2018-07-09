@@ -21,7 +21,7 @@ public class DynamicInput<T> {
 		this.defaultData = defaultData;
 	}
 
-	public T GetValue(DialogueManager manager) {
+	public T GetValue(DialogueController manager) {
 		if (dynamic) {
 			IValueNode<T> node = manager.currentDialogue.GetNode(inputNode) as IValueNode<T>;
 			return node == null ? defaultData : node.GetValue(manager);

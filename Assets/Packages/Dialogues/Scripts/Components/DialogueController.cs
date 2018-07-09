@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueManager : MonoBehaviour {
+public class DialogueController : MonoBehaviour {
 	public GameObject dialoguePanel;
 	public GameObject actorPrefab;
 	public GameObject actorContainer;
@@ -17,7 +17,6 @@ public class DialogueManager : MonoBehaviour {
 	public InputField stringInputField;
 	public Button stringInputButton;
 
-	//Turn this into a class that we can enable, and get data from.
 	public IntegerInput integerInputPanel;
 	public Button integerInputButton;
 
@@ -103,12 +102,19 @@ public class DialogueManager : MonoBehaviour {
 			return;
 		}
 
-		Blackboard.Initialize();
+		if (GameManager.Instance == null) {
+			Debug.LogError("[Dialogue Manager] - GameManager.Instance is Null");
+			enabled = false;
+			return;
+		}
+
+		if (GameManager.Instance.blackboard == null) {
+			Debug.LogError("[Dialogue Manager] - GameManager's Blackboard is Null");
+			enabled = false;
+			return;
+		}
 	}
 
-	private void Start() {
-		StartDialogue(DialogueDatabase.Instance.GetItem("test"));
-	}
 	private void Update() {
 		if (Input.GetMouseButtonDown(0)) {
 			isWaiting = false;

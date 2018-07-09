@@ -11,7 +11,7 @@ public class InputStringNode : DialogueNode, IExecutableNode, IValueNode<string>
 		targetNode = -1;
 	}
 
-	public void Execute(DialogueManager manager) {
+	public void Execute(DialogueController manager) {
 		manager.stringInputPanel.SetActive(true);
 
 		manager.stringInputField.text = "";
@@ -19,15 +19,17 @@ public class InputStringNode : DialogueNode, IExecutableNode, IValueNode<string>
 		manager.stringInputButton.onClick.AddListener( () => { HandleSubmitClick(manager); });
 	}
 
-	public string GetValue(DialogueManager manager) {
+	public string GetValue(DialogueController manager) {
 		return inputData;
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		targetNode = EditorGUILayout.IntField("Target Node", targetNode);
 	}
+#endif
 
-	private void HandleSubmitClick(DialogueManager manager) {
+	private void HandleSubmitClick(DialogueController manager) {
 		inputData = manager.stringInputField.text;
 		JumpToNode(manager, targetNode);
 

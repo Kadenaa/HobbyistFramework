@@ -20,7 +20,7 @@ public class ChoiceNode : DialogueNode, IExecutableNode {
 		choices.Remove(choice);
 	}
 
-	public void Execute(DialogueManager manager) {
+	public void Execute(DialogueController manager) {
 		manager.choicePanel.SetActive(true);
 
 		foreach (DialogueChoice choice in choices) {
@@ -31,6 +31,7 @@ public class ChoiceNode : DialogueNode, IExecutableNode {
 		}
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		for (int i = 0; i < choices.Count; ++i) {
 			EditorGUILayout.BeginHorizontal();
@@ -46,8 +47,9 @@ public class ChoiceNode : DialogueNode, IExecutableNode {
 			AddChoice();
 		}
 	}
+#endif
 
-	private void HandleChoice(DialogueManager manager, DialogueChoice choice) {
+	private void HandleChoice(DialogueController manager, DialogueChoice choice) {
 		manager.choicePanel.SetActive(false);
 
 		foreach (Transform button in manager.choicePanel.transform) {

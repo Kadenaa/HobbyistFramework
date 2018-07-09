@@ -12,41 +12,6 @@ using System;
 /// </summary>
 public class Blackboard {
 	/// <summary>
-	/// The Path to serialize Data to relative to Application.persistentDataPath.
-	/// </summary>
-	private static string serializationPath = "Data/Blackboard.xml";
-
-	/// <summary>
-	/// Private instance of Blackboard.
-	/// If null, Blackboard instance is Constructed and Loaded.
-	/// </summary>
-	private static Blackboard _instance;
-
-	/// <summary>
-	/// The Global Blackboard instance.
-	/// </summary>
-	public static Blackboard Instance {
-		get {
-			if (_instance == null) {
-				_instance = new Blackboard();
-				Blackboard.Load();
-			}
-			return _instance;
-		}
-	}
-
-	/// <summary>
-	/// Initializes the Blackboard Instance.
-	/// </summary>
-	public static void Initialize() {
-		if (_instance == null) {
-			_instance = new Blackboard();
-			Load();
-			Debug.Log("[Blackboard] = Initialized");
-		}
-	}
-
-	/// <summary>
 	/// Container for all of the data.
 	/// All Objects stored must be Primitive or a String.
 	/// </summary>
@@ -55,8 +20,13 @@ public class Blackboard {
 	/// <summary>
 	/// Private Constructor to ensure the only instance of Blackboard is static.
 	/// </summary>
-	private Blackboard() {
+	public Blackboard() {
 		data = new Dictionary<string, object>();
+	}
+
+	public Blackboard(string filePath) {
+		data = new Dictionary<string, object>();
+		Load(filePath);
 	}
 
 	/// <summary>
@@ -134,28 +104,25 @@ public class Blackboard {
 	/// Loads/Reloads the database.
 	/// Reverts all unsaved changes.
 	/// </summary>
-	public static void Load() {
-		string filePath = Application.persistentDataPath + "/" + serializationPath;
-		_instance.data.Clear();
+	public void Load(string filePath) {
+		data.Clear();
 
 		if (File.Exists(filePath)) {
 			XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<BlackboardEntry>));
 			using (StreamReader reader = new StreamReader(filePath)) {
 				List<BlackboardEntry> entries = (List<BlackboardEntry>)xmlSerializer.Deserialize(reader);
 				foreach (BlackboardEntry entry in entries) {
-					_instance.data.Add(entry.key, entry.value);
+					data.Add(entry.key, entry.value);
 				}
 			}
 		} else {
-			string[] splitPath = serializationPath.Split(new char[] { '/' });
+			string[] splitPath = filePath.Split(new char[] { '/' });
 			for (int i = 0; i < splitPath.Length; ++i) {
-				string currentPath = Application.persistentDataPath + "/" + string.Join("/", splitPath.Take(1 + i).ToArray());
+				string currentPath = string.Join("/", splitPath.Take(1 + i).ToArray());
 
 				if (i == splitPath.Length - 1) {
 					if (!File.Exists(currentPath)) {
 						File.Create(currentPath);
-						Save();
-						return;
 					}
 				} else {
 					if (!Directory.Exists(currentPath)) {
@@ -169,20 +136,18 @@ public class Blackboard {
 	/// <summary>
 	/// Saves all changes.
 	/// </summary>
-	public static void Save() {
-		if (_instance != null) {
-			List<BlackboardEntry> entries = new List<BlackboardEntry>();
-			foreach (KeyValuePair<string, object> kvp in _instance.data) {
-				entries.Add(new BlackboardEntry(kvp.Key, kvp.Value));
-			}
-			XmlSerializer serializer = new XmlSerializer(typeof(List<BlackboardEntry>));
-			using (StreamWriter writer = new StreamWriter(Application.persistentDataPath + "/" + serializationPath)) {
-				try {
-					serializer.Serialize(writer, entries);
-				} catch(System.Exception e) {
-					Debug.LogError(string.Format("[Blackboard] - {0}", e.StackTrace));
-					Debug.LogError("[Blackboard] - Confirm that Complex Types are XMLIncluded");
-				}
+	public void Save(string filePath) {
+		List<BlackboardEntry> entries = new List<BlackboardEntry>();
+		foreach (KeyValuePair<string, object> kvp in data) {
+			entries.Add(new BlackboardEntry(kvp.Key, kvp.Value));
+		}
+		XmlSerializer serializer = new XmlSerializer(typeof(List<BlackboardEntry>));
+		using (StreamWriter writer = new StreamWriter(filePath)) {
+			try {
+				serializer.Serialize(writer, entries);
+			} catch(System.Exception e) {
+				Debug.LogError(string.Format("[Blackboard] - {0}", e.StackTrace));
+				Debug.LogError("[Blackboard] - Confirm that Complex Types are XMLIncluded");
 			}
 		}
 	}

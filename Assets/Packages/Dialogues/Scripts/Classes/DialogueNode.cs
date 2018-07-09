@@ -7,9 +7,11 @@ public abstract class DialogueNode {
 
 	public DialogueNode() { }
 
+#if UNITY_EDITOR
 	public abstract void DetailEditorGUI();
+#endif
 
-	protected void JumpToNode(DialogueManager manager, int targetNode) {
+	protected void JumpToNode(DialogueController manager, int targetNode) {
 		manager.currentNode = manager.currentDialogue.GetNode(targetNode);
 		if (manager.currentNode != null) {
 			IExecutableNode node = manager.currentNode as IExecutableNode;
@@ -30,7 +32,7 @@ public abstract class DialogueNode {
 				Debug.LogError("[Dialogue Node] - Unknown Variable Source");
 				return "";
 			case "blackboard":
-				object blackboardVariable = Blackboard.Instance[name];
+				object blackboardVariable = GameManager.Instance.blackboard[name];
 				if (blackboardVariable != null) {
 					return blackboardVariable.ToString();
 				} else {
@@ -39,8 +41,8 @@ public abstract class DialogueNode {
 		}
 	}
 
-	public virtual void OnEnter(DialogueManager manager) { }
-	public virtual void OnLeave(DialogueManager manager) { }
-	public virtual void OnSkip(DialogueManager manager) { }
-	public virtual void OnQuit(DialogueManager manager) { }
+	public virtual void OnEnter(DialogueController manager) { }
+	public virtual void OnLeave(DialogueController manager) { }
+	public virtual void OnSkip(DialogueController manager) { }
+	public virtual void OnQuit(DialogueController manager) { }
 }

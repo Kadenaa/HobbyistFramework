@@ -4,5 +4,5 @@ using System.Linq;
 using System.Text;
 
 public interface IExecutableNode {
-	void Execute(DialogueManager manager);
+	void Execute(DialogueController manager);
 }

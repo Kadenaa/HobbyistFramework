@@ -21,7 +21,7 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		delayPerCharacter = 0.1f;
 	}
 
-	public void Execute(DialogueManager manager) {
+	public void Execute(DialogueController manager) {
 		if (!manager.dialoguePanel.activeSelf) {
 			manager.dialoguePanel.SetActive(true);
 		}
@@ -34,6 +34,7 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		manager.StartCoroutine(AnimateText(manager));
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		speakerText = EditorGUILayout.TextField("Speaker", speakerText);
 
@@ -49,8 +50,9 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		targetNode = EditorGUILayout.IntField("Target", targetNode);
 		delayPerCharacter = EditorGUILayout.FloatField("Default Delay", delayPerCharacter);
 	}
+#endif
 
-	private IEnumerator AnimateText(DialogueManager manager) {
+	private IEnumerator AnimateText(DialogueController manager) {
 		string text = dynamicInput.GetValue(manager);
 
 		for (int i = 0; i < text.Length; ++i) {

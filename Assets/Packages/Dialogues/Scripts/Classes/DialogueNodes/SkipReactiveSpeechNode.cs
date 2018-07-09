@@ -21,7 +21,7 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 		delayPerCharacter = 0.1f;
 	}
 
-	public void Execute(DialogueManager manager) {
+	public void Execute(DialogueController manager) {
 		if (!manager.dialoguePanel.activeSelf) {
 			manager.dialoguePanel.SetActive(true);
 		}
@@ -34,7 +34,7 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 		manager.StartCoroutine(AnimateText(manager));
 	}
 
-	private IEnumerator AnimateText(DialogueManager manager) {
+	private IEnumerator AnimateText(DialogueController manager) {
 		string text = dynamicInput.GetValue(manager);
 
 		for (int i = 0; i < text.Length; ++i) {
@@ -71,6 +71,7 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 		yield return null;
 	}
 
+#if UNITY_EDITOR
 	public override void DetailEditorGUI() {
 		speakerText = EditorGUILayout.TextField("Speaker", speakerText);
 
@@ -87,4 +88,5 @@ public class SkipReactiveSpeechNode : DialogueNode, IExecutableNode {
 		interruptedNode = EditorGUILayout.IntField("Interrupted Target", interruptedNode);
 		delayPerCharacter = EditorGUILayout.FloatField("Default Delay", delayPerCharacter);
 	}
+#endif
 }
