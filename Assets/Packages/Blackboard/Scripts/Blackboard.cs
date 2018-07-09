@@ -6,24 +6,27 @@ using System.Xml.Serialization;
 using System;
 
 /// <summary>
-/// Blackboard is a class that provides Global Access to Primitive Data.
-/// Used to store and access data so that scripts can reference them anywhere.
-/// Examples: Dialogue and Quests.
+/// Blackboard is a class that provides access to Primitive Data. (Can be modified to allow any kind of Data)
+/// Meant to be stored on a Global source to provide global data. (In this case, our GameManager.Instance)
 /// </summary>
 public class Blackboard {
 	/// <summary>
 	/// Container for all of the data.
-	/// All Objects stored must be Primitive or a String.
+	/// Data is accessed via an Associative Key.
 	/// </summary>
 	private Dictionary<string, object> data;
 
 	/// <summary>
-	/// Private Constructor to ensure the only instance of Blackboard is static.
+	/// Basic Constructor.
 	/// </summary>
 	public Blackboard() {
 		data = new Dictionary<string, object>();
 	}
 
+	/// <summary>
+	/// Creates and Instance of Blackboard, and Loads Data at FilePath.
+	/// </summary>
+	/// <param name="filePath"></param>
 	public Blackboard(string filePath) {
 		data = new Dictionary<string, object>();
 		Load(filePath);
