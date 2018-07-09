@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MainMenuManager : MonoBehaviour {
 	public GameObject mainMenu;
@@ -26,6 +27,9 @@ public class MainMenuManager : MonoBehaviour {
 
 	private void FindAllSaves() {
 		gameSaves = Directory.GetFiles(GameManager.gameSaveFolder, "*.save", SearchOption.AllDirectories);
+		for (int i = 0; i < gameSaves.Length; ++i) {
+			gameSaves[i] = gameSaves[i].Replace('\\', '/');
+		}
 	}
 
 	private void GenerateLoadButtons() {
@@ -58,12 +62,20 @@ public class MainMenuManager : MonoBehaviour {
 	}
 
 	public void LoadSelectedButton() {
-		GameManager.Instance.Load(selectedSave);
-		SceneManager.LoadScene(newGameScene);
+		if (!string.IsNullOrEmpty(selectedSave)) {
+			GameManager.Instance.Load(selectedSave);
+			SceneManager.LoadScene(newGameScene);
+		}
 	}
 
 	public void DeleteSelectedButton() {
-
+		if (!string.IsNullOrEmpty(selectedSave)) {
+			string[] split = selectedSave.Split(new char[] { '/' });
+			string folder = string.Join("/", split.Take(split.Length - 1).ToArray());
+			Directory.Delete(folder, true);
+			GenerateLoadButtons();
+			selectedSave = null;
+		}
 	}
 
 	public void LoadCancelButton() {

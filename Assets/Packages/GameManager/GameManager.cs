@@ -37,6 +37,9 @@ public class GameManager : MonoBehaviour {
 	public static void Create(string gameName) {
 		Directory.CreateDirectory(gameSaveFolder + "/" + gameName);
 		File.Create(gameSaveFolder + "/" + gameName + "/" + gameName + ".save");
+
+		Blackboard blackboard = new Blackboard();
+		blackboard.Save(gameSaveFolder + "/" + gameName + "/Blackboard.xml");
 	}
 
 	public void Load(string filePath) {
