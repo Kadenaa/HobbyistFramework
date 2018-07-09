@@ -29,7 +29,6 @@ public class SpeechNode : DialogueNode, IExecutableNode {
 		currentDelay = delayPerCharacter;
 		manager.dialogueText.text = "";
 		manager.isWaiting = true;
-		manager.canSkip = true;
 
 		manager.speakerText.text = speakerText;
 		manager.StartCoroutine(AnimateText(manager));

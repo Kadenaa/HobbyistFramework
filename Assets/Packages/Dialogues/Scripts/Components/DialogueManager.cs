@@ -18,7 +18,7 @@ public class DialogueManager : MonoBehaviour {
 	public Button stringInputButton;
 
 	//Turn this into a class that we can enable, and get data from.
-	public GameObject integerInputPanel;
+	public IntegerInput integerInputPanel;
 	public Button integerInputButton;
 
 	public List<string> actorKeys;
@@ -28,7 +28,6 @@ public class DialogueManager : MonoBehaviour {
 	public Dialogue currentDialogue;
 	public DialogueNode currentNode;
 
-	public bool canSkip;
 	public bool isWaiting;
 
 	private void Awake() {
@@ -112,9 +111,7 @@ public class DialogueManager : MonoBehaviour {
 	}
 	private void Update() {
 		if (Input.GetMouseButtonDown(0)) {
-			if (canSkip) {
-				isWaiting = false;
-			}
+			isWaiting = false;
 		}
 	}
 
@@ -143,9 +140,5 @@ public class DialogueManager : MonoBehaviour {
 				node.Execute(this);
 			}
 		}
-	}
-
-	public void StopWaiting() {
-		isWaiting = false;
 	}
 }

@@ -13,8 +13,6 @@ public class InputStringNode : DialogueNode, IExecutableNode, IValueNode<string>
 
 	public void Execute(DialogueManager manager) {
 		manager.stringInputPanel.SetActive(true);
-		manager.canSkip = false;
-		manager.isWaiting = true;
 
 		manager.stringInputField.text = "";
 		manager.stringInputButton.onClick.RemoveAllListeners();
